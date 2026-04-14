@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  DOCTOR
+  NURSE
+}
+
+enum NoteType {
+  SOAP
+  PROGRESS
+  DISCHARGE
+}
+
+enum Severity {
+  MILD
+  MODERATE
+  SEVERE
+}
+
+enum Status {
+  ACTIVE
+  RESOLVED
+}
+
+enum Frequency {
+  DAILY
+  BID
+  TID
+  QID
+  Q4H
+  Q6H
+  Q8H
+  Q12H
+  QHS
+  QOD
+  AC
+  PC
+  PRN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  NONBINARY
+  TRANSMTF
+  TRANSFTM
+}
+
+enum BloodType {
+  A_POS
+  A_NEG
+  B_POS
+  B_NEG
+  AB_POS
+  AB_NEG
+  O_POS
+  O_NEG
+  UNKNOWN
+}
+
+enum Resource {
+  PATIENT
+  NOTE
+  MEDICATION
+  ALLERGY
+  DIAGNOSIS
+}
+
+enum Action {
+  VIEW
+  CREATE
+  UPDATE
+  DELETE
+}
+
+model User {
+  id String @id @default(uuid())
+  firstName String
+  lastName String
+  role Role @default(NURSE)
+  email String @unique
+  password String
+  writtenNotes Note[] @relation("NoteWriter")
+  recordedDiagnoses Diagnosis[] @relation("DiagnosisProvider")
+  prescribedMedications Medication[] @relation("MedicationPrescriber")
+  documentedAllergies Allergy[] @relation("AllergyDocumentor")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Patient {
+  id String @id @default(uuid())
+  MRN Int @unique
+  firstName String
+  lastName String
+  dateOfBirth DateTime
+  phone String
+  address String
+  weight Float
+  gender Gender
+  bloodType BloodType?
+  notes Note[]
+  diagnoses Diagnosis[]
+  allergies Allergy[]
+  medications Medication[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Note {
+  id String @id @default(uuid())
+  noteType NoteType
+  body String
+  patient Patient @relation(fields: [patientId], references: [id])
+  patientId String
+  user User @relation("NoteWriter", fields: [writerId], references: [id])
+  writerId String
+  signedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Diagnosis {
+  id String @id @default(uuid())
+  name String
+  code String
+  status Status
+  patient Patient @relation(fields: [patientId], references: [id])
+  patientId String
+  user User @relation("DiagnosisProvider", fields: [providerId], references: [id]) 
+  providerId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Medication {
+  id String @id @default(uuid())
+  name String
+  frequency Frequency
+  dosage Float
+  status Status
+  patient Patient @relation(fields: [patientId], references: [id])
+  patientId String
+  user User @relation("MedicationPrescriber", fields: [prescriberId], references: [id])
+  prescriberId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Allergy {
+  id String @id @default(uuid())
+  allergen String
+  symptoms String
+  severity Severity
+  patient Patient @relation(fields: [patientId], references: [id])
+  patientId String
+  user User @relation("AllergyDocumentor", fields: [providerId], references: [id])
+  providerId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id String @id @default(uuid())
+  resource Resource
+  action Action
+  timestamp DateTime @default(now())
+  resourceId String
+  userId String
+}
