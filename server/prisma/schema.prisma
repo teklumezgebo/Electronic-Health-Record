@@ -86,7 +86,7 @@ model User {
   firstName String
   lastName String
   role Role @default(NURSE)
-  email String @unique
+  username String @unique
   password String
   writtenNotes Note[] @relation("NoteWriter")
   recordedDiagnoses Diagnosis[] @relation("DiagnosisProvider")
