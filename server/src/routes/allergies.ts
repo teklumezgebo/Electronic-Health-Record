@@ -4,7 +4,7 @@ import { authenticateToken, authorizeRoles } from '../middleware/auth'
 import { logAudit } from '../lib/audit'
 import { Action, Resource } from '../generated/prisma/client'
 
-const router = Router()
+const router = Router({ mergeParams: true })
 
 router.get('/', authenticateToken, async (req, res) => {
     try {

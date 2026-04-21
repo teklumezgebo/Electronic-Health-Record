@@ -7,6 +7,7 @@ import diagnosesRouter from './routes/diagnoses'
 import notesRouter from './routes/notes'
 import medicationsRouter from './routes/medications'
 import allergiesRouter from './routes/allergies'
+import summaryRouter from './routes/summary'
 
 // Load env variables into process.env, Express API creation, and establish specific port
 dotenv.config() 
@@ -17,6 +18,11 @@ const PORT = process.env.PORT || 3001
 app.use((cors({ origin: 'http://localhost:5173' })))
 app.use(express.json()) 
 
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'EHR server is running' })
+})
+
 // Routes
 app.use('/api/auth', authRouter)
 app.use('/api/patients', patientsRouter)
@@ -24,6 +30,7 @@ app.use('/api/patients/:patientId/notes', notesRouter)
 app.use('/api/patients/:patientId/diagnoses', diagnosesRouter)
 app.use('/api/patients/:patientId/medications', medicationsRouter)
 app.use('/api/patients/:patientId/allergies', allergiesRouter)
+app.use('/api/patients/', summaryRouter)
 
 // Boot up API
 app.listen(PORT, () => {
