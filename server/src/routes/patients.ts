@@ -37,8 +37,8 @@ router.get('/:id', authenticateToken, async (req, res) => {
     }
 })
 
-// Physicians and Admin only authorized to create patient records
-router.post('/', authenticateToken, authorizeRoles('ADMIN', 'DOCTOR'), async (req, res) => {
+// Physicians, Admin, and Nurses only authorized to create patient records
+router.post('/', authenticateToken, authorizeRoles('ADMIN', 'DOCTOR', 'NURSE'), async (req, res) => {
     try {
         const patient = await prisma.patient.create({
             data: {
@@ -60,8 +60,8 @@ router.post('/', authenticateToken, authorizeRoles('ADMIN', 'DOCTOR'), async (re
     }
 })
 
-// Physicians and Admin only authorized to update patient records
-router.put('/:id', authenticateToken, authorizeRoles('ADMIN', 'DOCTOR'), async (req, res) => {
+// Physicians, Admin, and Nurses only authorized to update patient records
+router.put('/:id', authenticateToken, authorizeRoles('ADMIN', 'DOCTOR', 'NURSE'), async (req, res) => {
     try {
         const updatedPatient = await prisma.patient.update({
             where: { id: req.params.id as string },

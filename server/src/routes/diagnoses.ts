@@ -41,7 +41,7 @@ router.post('/', authenticateToken, authorizeRoles('DOCTOR'), async (req, res) =
     }
 })
 
-// Diagnosing Doctor is only authorized to change diagnosis status
+// Doctors are only authorized to update diagnoses
 router.put('/:id', authenticateToken, authorizeRoles('DOCTOR'), async (req, res) => {
     try {
         const diagnosis = await prisma.diagnosis.findUnique({
@@ -52,13 +52,9 @@ router.put('/:id', authenticateToken, authorizeRoles('DOCTOR'), async (req, res)
             return res.status(404).send() // Diagnosis does not exist
         }
 
-        if (diagnosis.providerId !== req.user!.id) {
-            return res.status(403).send() // Requesting user is not the provider who recorded this diagnosis
-        }
-
         const updatedDiagnosis = await prisma.diagnosis.update({
-        where: { id: req.params.id as string },
-        data: req.body
+            where: { id: req.params.id as string },
+            data: req.body
         })
 
         res.status(200).send(updatedDiagnosis)

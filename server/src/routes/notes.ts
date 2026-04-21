@@ -20,6 +20,7 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 })
 
+// Only Doctors and Nurses can create notes
 router.post('/', authenticateToken, authorizeRoles('DOCTOR', 'NURSE'), async (req, res) => {
     try {
         const note = await prisma.note.create({
@@ -38,7 +39,7 @@ router.post('/', authenticateToken, authorizeRoles('DOCTOR', 'NURSE'), async (re
 })
 
 // Before a note is able to be updated it must exist and belong to the user accessing it
-router.put('/:id', authenticateToken, async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRoles('DOCTOR', 'NURSE'), async (req, res) => {
     try {
         const note = await prisma.note.findUnique({
             where: { id: req.params.id as string }
@@ -64,6 +65,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
     }
 })
 
+// Sign note
 router.put('/:id/sign', authenticateToken, authorizeRoles('DOCTOR', 'NURSE'), async (req, res) => {
     try {
         const note = await prisma.note.findUnique({

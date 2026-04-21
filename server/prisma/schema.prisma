@@ -11,6 +11,7 @@ enum Role {
   ADMIN
   DOCTOR
   NURSE
+  TECHNICIAN
 }
 
 enum NoteType {

@@ -53,10 +53,6 @@ router.put('/:id', authenticateToken, authorizeRoles('DOCTOR'), async (req, res)
             return res.status(404).send() // medication does not exist
         }
 
-        if (medication.prescriberId !== req.user!.id) {
-            return res.status(403).send() // Requesting user is not the provider who recorded this medication
-        }
-
         const updatedMedication = await prisma.medication.update({
             where: { id: req.params.id as string },
             data: req.body

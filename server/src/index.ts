@@ -5,6 +5,8 @@ import authRouter from './routes/auth'
 import patientsRouter from './routes/patients'
 import diagnosesRouter from './routes/diagnoses'
 import notesRouter from './routes/notes'
+import medicationsRouter from './routes/medications'
+import allergiesRouter from './routes/allergies'
 
 // Load env variables into process.env, Express API creation, and establish specific port
 dotenv.config() 
@@ -20,6 +22,8 @@ app.use('/api/auth', authRouter)
 app.use('/api/patients', patientsRouter)
 app.use('/api/patients/:patientId/notes', notesRouter)
 app.use('/api/patients/:patientId/diagnoses', diagnosesRouter)
+app.use('/api/patients/:patientId/medications', medicationsRouter)
+app.use('/api/patients/:patientId/allergies', allergiesRouter)
 
 // Boot up API
 app.listen(PORT, () => {
