@@ -59,7 +59,7 @@ router.post('/login', async (req, res) => {
 
         // JWT created for stateless authorization
         const accessToken = jwt.sign(
-            { id: user.id, role: user.role },
+            { id: userWithoutPassword.id, role: userWithoutPassword.role },
             process.env.ACCESS_TOKEN_SECRET!,
             { expiresIn: '8h' }
         )

@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import authRouter from './routes/auth'
+import patientRouter from './routes/patients'
 import { authenticateToken } from './middleware/auth'
 
 dotenv.config() // Load env variables into process.env
@@ -18,11 +19,8 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'EHR server is running' })
 })
 
-app.get('/api/protected', authenticateToken, (req, res) => {
-  res.json({ message: 'you are authenticated', user: req.body ?? null})
-})
-
 app.use('/api/auth', authRouter)
+app.use('/api/patients', patientRouter)
 
 app.listen(PORT, () => {
     console.log(`Server running on ${PORT}`)

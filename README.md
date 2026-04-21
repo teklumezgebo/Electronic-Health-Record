@@ -66,7 +66,7 @@ A full-stack Electronic Health Record system built to simulate the core workflow
 | Database | PostgreSQL |
 | ORM | Prisma |
 | Authentication | JWT, bcrypt |
-| AI | Claude API (Anthropic) |
+| AI | Claude API |
 | ICD-10 Search | NLM Clinical Tables API |
 | Infrastructure | Docker |
 

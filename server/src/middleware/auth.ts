@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
 
+// Extending Request type to include an optional user field
 declare global {
   namespace Express {
     interface Request {
