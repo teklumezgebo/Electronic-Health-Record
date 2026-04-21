@@ -6,62 +6,63 @@ const router = Router()
 
 router.get('/', authenticateToken, async (req, res) => {
     try {
-        const diagnoses = await prisma.diagnosis.findMany({
+        const medications = await prisma.medication.findMany({
             where: { patientId: req.params.patientId as string }
         })
 
-        if (diagnoses.length == 0) { 
-            return res.status(404).send() // Diagnoses do not exist
+        if (medications.length == 0) { 
+            return res.status(404).send() // medications do not exist
         }
 
-        res.status(200).send(diagnoses)
+        res.status(200).send(medications)
     } catch (error) {
         console.log(error)
         res.status(500).send()
     }
 })
 
-// Doctors are only authorized to diagnose
+// Doctors are only authorized to prescribe
 router.post('/', authenticateToken, authorizeRoles('DOCTOR'), async (req, res) => {
     try {
-        const diagnosis = await prisma.diagnosis.create({
+        const medication = await prisma.medication.create({
             data: {
                 name: req.body.name,
-                code: req.body.code,
+                dosage: req.body.dosage,
+                frequency: req.body.frequency,
                 status: req.body.status,
                 patientId: req.params.patientId as string,
-                providerId: req.user!.id
+                prescriberId: req.user!.id
             }
         })
 
-        res.status(201).send(diagnosis)
+        res.status(201).send(medication)
     } catch (error) {
         console.log(error)
         res.status(500).send()
     }
 })
 
-// Diagnosing Doctor is only authorized to change diagnosis status
+// Prescribing Doctor is only authorized to update medication
 router.put('/:id', authenticateToken, authorizeRoles('DOCTOR'), async (req, res) => {
     try {
-        const diagnosis = await prisma.diagnosis.findUnique({
+        const medication = await prisma.medication.findUnique({
             where: { id: req.params.id as string }
         })
 
-        if (diagnosis == null) {
-            return res.status(404).send() // Diagnosis does not exist
+        if (medication == null) {
+            return res.status(404).send() // medication does not exist
         }
 
-        if (diagnosis.providerId !== req.user!.id) {
-            return res.status(403).send() // Requesting user is not the provider who recorded this diagnosis
+        if (medication.prescriberId !== req.user!.id) {
+            return res.status(403).send() // Requesting user is not the provider who recorded this medication
         }
 
-        const updatedDiagnosis = await prisma.diagnosis.update({
-        where: { id: req.params.id as string },
-        data: req.body
+        const updatedMedication = await prisma.medication.update({
+            where: { id: req.params.id as string },
+            data: req.body
         })
 
-        res.status(200).send(updatedDiagnosis)
+        res.status(200).send(updatedMedication)
 
     } catch (error) {
         console.log(error)
