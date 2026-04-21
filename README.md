@@ -81,7 +81,6 @@ ehr-app/
 ├── client/          # React + TypeScript frontend (Vite)
 └── server/          # Node.js + Express backend
     ├── src/
-    │   ├── controllers/
     │   ├── middleware/
     │   ├── routes/
     │   ├── lib/
