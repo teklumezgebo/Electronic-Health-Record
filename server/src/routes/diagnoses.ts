@@ -1,6 +1,8 @@
 import { prisma } from '../lib/prisma'
 import { Router } from 'express'
 import { authenticateToken, authorizeRoles } from '../middleware/auth'
+import { logAudit } from '../lib/audit'
+import { Action, Resource } from '../generated/prisma/client'
 
 const router = Router()
 
@@ -14,6 +16,7 @@ router.get('/', authenticateToken, async (req, res) => {
             return res.status(404).send() // Diagnoses do not exist
         }
 
+        await logAudit(req.user!.id, Action.VIEW, Resource.DIAGNOSIS, req.params.patientId as string)
         res.status(200).send(diagnoses)
     } catch (error) {
         console.log(error)
@@ -34,6 +37,7 @@ router.post('/', authenticateToken, authorizeRoles('DOCTOR'), async (req, res) =
             }
         })
 
+        await logAudit(req.user!.id, Action.CREATE, Resource.DIAGNOSIS, diagnosis.id)
         res.status(201).send(diagnosis)
     } catch (error) {
         console.log(error)
@@ -57,8 +61,8 @@ router.put('/:id', authenticateToken, authorizeRoles('DOCTOR'), async (req, res)
             data: req.body
         })
 
+        await logAudit(req.user!.id, Action.UPDATE, Resource.DIAGNOSIS, req.params.id as string)
         res.status(200).send(updatedDiagnosis)
-
     } catch (error) {
         console.log(error)
         res.status(500).send()

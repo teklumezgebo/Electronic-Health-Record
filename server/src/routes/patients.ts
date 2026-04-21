@@ -1,12 +1,15 @@
 import { prisma } from '../lib/prisma'
 import { Router } from 'express'
 import { authenticateToken, authorizeRoles } from '../middleware/auth'
+import { logAudit } from '../lib/audit'
+import { Action, Resource } from '../generated/prisma/client'
 
 const router = Router()
 
 router.get('/', authenticateToken, async (req, res) => {
     try {
         const patients = await prisma.patient.findMany()
+        await logAudit(req.user!.id, Action.VIEW, Resource.PATIENT, 'all')
         res.status(200).send(patients) 
     } catch (error) {
         console.log(error)
@@ -30,6 +33,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
             return res.status(404).send() // Patient does not exist
         }
 
+        await logAudit(req.user!.id, Action.VIEW, Resource.PATIENT, patient.id)
         res.status(200).send(patient) 
     } catch (error) {
         console.log(error)
@@ -53,6 +57,8 @@ router.post('/', authenticateToken, authorizeRoles('ADMIN', 'DOCTOR', 'NURSE'), 
                 bloodType: req.body.bloodType
             },
         })
+
+        await logAudit(req.user!.id, Action.CREATE, Resource.PATIENT, patient.id)
         res.status(201).send(patient)
     } catch (error) {
         console.log(error)
@@ -67,7 +73,7 @@ router.put('/:id', authenticateToken, authorizeRoles('ADMIN', 'DOCTOR', 'NURSE')
             where: { id: req.params.id as string },
             data : req.body
         })
-
+        await logAudit(req.user!.id, Action.UPDATE, Resource.PATIENT, updatedPatient.id)
         res.status(200).send(updatedPatient)
     } catch (error) {
         console.log(error)
