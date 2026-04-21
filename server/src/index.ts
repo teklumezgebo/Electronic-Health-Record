@@ -3,7 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import authRouter from './routes/auth'
 import patientRouter from './routes/patients'
-import { authenticateToken } from './middleware/auth'
+import notesRouter from './routes/notes'
 
 dotenv.config() // Load env variables into process.env
 
@@ -21,6 +21,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authRouter)
 app.use('/api/patients', patientRouter)
+app.use('/api/patients/:patientId/notes', notesRouter)
 
 app.listen(PORT, () => {
     console.log(`Server running on ${PORT}`)
