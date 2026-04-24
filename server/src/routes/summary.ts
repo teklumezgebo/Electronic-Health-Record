@@ -50,7 +50,7 @@ router.get('/:id/summary', authenticateToken, authorizeRoles('DOCTOR'), async (r
 
         const block = message.content[0]
 
-        if (block.type !== 'text') { // Can either be TextBlock or ThinkingBlock, must be the former
+        if (block.type !== 'text') { // SDK returns TextBlock or ThinkingBlock, only TextBlock has a text field we can parse
             return res.status(500).send()
         }
         

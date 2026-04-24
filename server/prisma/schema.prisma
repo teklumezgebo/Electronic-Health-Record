@@ -29,6 +29,7 @@ enum Severity {
 enum Status {
   ACTIVE
   RESOLVED
+  DISCONTINUED
 }
 
 enum Frequency {
@@ -107,7 +108,7 @@ model Patient {
   address String
   weight Float
   gender Gender
-  bloodType BloodType?
+  bloodType BloodType
   notes Note[]
   diagnoses Diagnosis[]
   allergies Allergy[]
