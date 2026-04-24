@@ -2,6 +2,8 @@ import type { User } from "../types";
 import { createContext, useState, useContext } from "react"
 import type { ReactNode } from "react"
 
+// Let token and user info be global and avoid prop drilling
+
 interface AuthContextType {
     token: string | null
     user: User | null
