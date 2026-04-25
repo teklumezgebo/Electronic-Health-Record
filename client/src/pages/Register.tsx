@@ -16,7 +16,7 @@ function Register() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
         try {
-            const response = await api.post('/auth/register', {
+            await api.post('/auth/register', {
                 firstName,
                 lastName,
                 username, 
@@ -24,7 +24,6 @@ function Register() {
                 role
             })
             setSuccess(true)
-
             setTimeout(() => {
                 navigate('/login')
             }, 2000)
